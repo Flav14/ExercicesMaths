@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Entrainêment Mathématiques Tom </title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <style>
+    .frame
+    {
+        width: 1280px;
+        height: 964px;
+        border: 0;
+
+        -ms-transform: scale(0.50);
+        -moz-transform: scale(0.50);
+        -o-transform: scale(0.75);
+        -webkit-transform: scale(0.75);
+        transform: scale(0.75);
+
+        -ms-transform-origin: 0 0;
+        -moz-transform-origin: 0 0;
+        -o-transform-origin: 0 0;
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+    }
+  </style>
+
+
+  </head>
+  <body>
+
+    <h3> Exercice à réaliser : </h3>
+    
+    <div>
+        Il s'agit d'un exercice de <span id="type_exercice"></span> et ton obectif est de : <br/><span id="objectif_exercice"></span>.<br/>
+        <span id="consignes_exercice"></span>
+    </div>
+    <div>
+      Dès que tu as fini, appelle papa ou maman.<br/>
+      <input type="password" class="form-control" id="validation"/>
+      <button type="button" class="btn btn-success" id="btn_valid">Validation de l'exercice</button>
+    </div>
+    <hr/>
+
+  <div id="choixJeu" class="text-center">
+    <iframe id="jeu" width="1024" height="1024" src="about:blank" frameborder="0" scrolling="np"></iframe>
+    
+  </div>
+
+
+  </body>
+ <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+  <script src="./renderer.js"></script>
+  <script>
+   
+    $(document).ready(function() { 
+
+      let lastAccordedDate = 0;
+      
+      
+      let hideWindow = () => {
+          remote.BrowserWindow.getFocusedWindow().hide();
+      }
+
+      let showWindow = () => {
+        remote.BrowserWindow.getAllWindows()[0].reload();
+        remote.BrowserWindow.getAllWindows()[0].show();
+
+      }
+
+      let checkTimer = () => {
+        //console.log("Loading timer..");
+        let _now = new Date();
+        if( (_now.getSeconds() - new Date(lastAccordedDate).getSeconds() ) > 3600 && !remote.BrowserWindow.getAllWindows()[0].isVisible() ){
+          showWindow();
+        }
+      }
+
+
+      // jeux est un tableau contenant des objets jeux { categorie : "cat, url : "url", objectif : "obj", choix: ["double", "moitié", "etc..."] }.
+      // cat est la catégrie d'apprentissage, url est l'adresse de l'iframe correspondant au jeu et obj est l'objectif de points ou de niveau à réaliser
+
+      let jeux = [
+        { categorie: "maths", url: "https://www.logicieleducatif.fr/math/calcul/stardoubles.php", objectif: "Finir le jeu avec une note supérieure à 14/20", choix : 
+          ["Doubles jusqu'à 10", "Doubles jusqu'à 20", "Doubles jusqu'à 50", "Doubles jusqu'à 100", "Moitiés jusqu'à 10", "Moitiés jusqu'à 20", "Moitiés jusqu'à 50", "Moitiés jusqu'à 100"]
+        },
+        { categorie: "maths", url: "https://www.logicieleducatif.fr/math/calcul/calculix.php", objectif: "Atteindre le Niveau 4", choix: [""]},
+        { categorie: "maths", url: "https://www.logicieleducatif.fr/math/calcul/tablesmultiplication.php", objectif: "Gagner la médaille de bronze", choix: ["Tables faciles"]
+        },
+        { categorie: "maths", url: "https://www.logicieleducatif.fr/math/calcul/tablesaddition.php", objectif: "Obtenir la médaille d'argent", choix: ["Tables difficiles"]
+        },
+        { categorie: "maths", url: "https://www.logicieleducatif.fr/math/calcul/euromonnaie.php", objectif: "Avoir 5 carrés verts", choix: [""]
+        },
+
+        { categorie: "logique", url: "https://www.logicieleducatif.fr/math/problemes/pb_tps.php", objectif: "5 points", choix : [""] },
+        { categorie: "logique", url: "https://www.logicieleducatif.fr/math/problemes/probleme-de-logique-cycle-2.php", objectif: "Finir 3 problèmes", choix : [""] },
+
+        { categorie: "geometrie", url: "https://www.logicieleducatif.fr/math/geometrie/figures-geometriques.php", objectif: "Avoir 5 bonnes réponses", choix : [""] }
+      ];
+
+      let chargeJeu = () => {
+        
+        let rnd = Math.floor(Math.random() * jeux.length);     // returns a random integer from 0 to 9
+        $("#type_exercice").html(jeux[rnd].categorie);
+        $("#objectif_exercice").html(jeux[rnd].objectif);
+        if(jeux[rnd].choix[0] != "" ){
+          let rnd2 = Math.floor(Math.random() * jeux[rnd].choix.length);
+          $("#consignes_exercice").html("Attention, tu dois choisir : <strong>"+jeux[rnd].choix[rnd2]+"</string>");
+        }
+        $("#jeu").attr('src',jeux[rnd].url);  
+        $("#validation").val("");
+      }
+
+      
+      chargeJeu();
+      $("#btn_valid").click( function(e) {
+        if( $("#validation").val() == "choulilou14220") {
+          let now = new Date();
+          lastAccordedDate = now;
+          console.log("Nouvelle date d'accord: ", lastAccordedDate);
+          hideWindow();
+        }
+      })
+
+      setInterval(checkTimer, 2000);
+
+
+    });
+
+    
+
+
+      
+  </script>
+</html>
